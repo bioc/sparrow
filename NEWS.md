@@ -1,16 +1,8 @@
-# sparrow 1.2 (devel)
-
-## Enhancements
-
-* The default "zero-centering" logic is updated in mgheatmap2 when `col` isn't
-  specified, but `recenter` is (backported to release 3.14)
+# sparrow 1.0.2
 
 ## Bug Fixes
 
-* `calculateIndividualLogFC` is updated to handle situations when `$genes`
-  data.frame has column names that collide with statistics generated from
-  differential expression, like `pval`, `padg`, and `AveExpr`. Thanks to
-  @sandersen12 for the bug report.
+* Fixes bug in testing code.
 
 # sparrow 1.0 (2021-10-XX)
 
