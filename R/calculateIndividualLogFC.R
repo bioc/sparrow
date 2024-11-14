@@ -150,6 +150,14 @@ calculateIndividualLogFC <- function(x, design, contrast = ncol(design),
     }
     tt <- as.data.frame(topTags(tt, Inf, sort.by='none'))
     tt <- transform(setDT(tt), t=NA_real_, feature_id=rownames(x))
+    
+    if (test_type == "anova") {
+      tt <- tt |> 
+        dplyr::mutate(
+          .intercept. = fit$coefficients[, "(Intercept)"],
+          .before = paste0("logFC.", colnames(design)[2L])
+        )
+    }
 
     # if the feature metadata already has a column named pval or padj, this
     # will cause problems, so we will change those if they are there already
@@ -188,6 +196,17 @@ calculateIndividualLogFC <- function(x, design, contrast = ncol(design),
       fit <- eBayes(fit, robust = robust.eBayes, trend = trend.eBayes)
       tt <- topTable(fit, contrast, number = Inf, sort.by = "none",
                      confint = confint)
+      if (test_type == "anova") {
+        tt <- tt |> 
+          dplyr::mutate(
+            .intercept. = fit$coefficients[, "(Intercept)"],
+            .before = colnames(design)[2L]
+          )
+        data.table::setnames(
+          tt,
+          old = colnames(design)[-1],
+          new = paste0("logFC.", colnames(design)[-1]))
+      }
     }
     tt <- transform(setDT(tt), feature_id = rownames(x))
     # if the feature metadata already has a column named pval or padj, this
