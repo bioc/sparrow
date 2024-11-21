@@ -200,12 +200,12 @@ calculateIndividualLogFC <- function(x, design, contrast = ncol(design),
         tt <- tt |> 
           dplyr::mutate(
             .intercept. = fit$coefficients[, "(Intercept)"],
-            .before = colnames(design)[2L]
-          )
+            .before = colnames(design)[2L])
+        rename. <- intersect(colnames(design)[-1L], colnames(tt))
         data.table::setnames(
           tt,
-          old = colnames(design)[-1],
-          new = paste0("logFC.", colnames(design)[-1]))
+          old = rename.,
+          new = paste0("logFC.", rename.))
       }
     }
     tt <- transform(setDT(tt), feature_id = rownames(x))
@@ -218,7 +218,10 @@ calculateIndividualLogFC <- function(x, design, contrast = ncol(design),
   if (!is.null(rename)) {
     rename.me <- rename[names(rename) %in% colnames(out)]
     if (length(rename.me)) {
-      setnames(out, names(rename.me), paste0(names(rename.me), ".feature"))
+      data.table::setnames(
+        out,
+        names(rename.me),
+        paste0(names(rename.me), ".feature"))
     }
     setnames(out, unname(rename), names(rename))
   }
