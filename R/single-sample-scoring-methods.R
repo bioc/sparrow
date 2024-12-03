@@ -120,7 +120,16 @@ eigenWeightedMean <- function(x, eigengene=1L, center=TRUE, scale=TRUE,
       res[["score"]] <- res[["score"]] - norm.x
     }
   }
-
+  
+  corr <- cor(t(x), method = "spearman")
+  csign <- rowSums(sign(corr))
+  res[["corr"]] <- corr
+  
+  res[["feature_info"]] <- data.frame(
+    feature_id = names(res[["weights"]]),
+    weight = unname(res[["weights"]]),
+    corrsign = csign[names(res[["weights"]])])
+  
   res
 }
 
